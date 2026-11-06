@@ -195,6 +195,26 @@ export class Embedder {
       return out;
     }
   }
+
+  // Query embedding. RETRIEVAL_QUERY taskType — asymmetric to indexing's
+  // RETRIEVAL_DOCUMENT. Using the wrong taskType costs 5-15% retrieval quality.
+  // No cache: queries are one-shot, and caching them would leak search history.
+  async embedQuery(text: string): Promise<Float32Array> {
+    await rpmBucket.take(1);
+    const res = await withRetry(
+      () =>
+        this.ai.models.embedContent({
+          model: EMBED_MODEL,
+          contents: text,
+          config: {
+            outputDimensionality: EMBEDDING_DIMS,
+            taskType: "RETRIEVAL_QUERY",
+          },
+        }),
+      "query",
+    );
+    return new Float32Array(res.embeddings![0].values!);
+  }
 }
 
 function sha256(s: string): string {
