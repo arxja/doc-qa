@@ -1,0 +1,22 @@
+[
+  { "id": "q01", "tag": "easy",      "q": "How do I authenticate requests to the API?",       "hint": "authentication#0" },
+  { "id": "q02", "tag": "easy",      "q": "What permission scopes can an API key have?",       "hint": "authentication#1" },
+  { "id": "q03", "tag": "entity",    "q": "What does E_AUTH_403 mean?",                       "hint": "authentication#4 or errors#2" },
+  { "id": "q04", "tag": "numeric",   "q": "How long do OAuth access tokens last?",            "hint": "authentication#3" },
+  { "id": "q05", "tag": "numeric",   "q": "How often should I rotate API keys?",              "hint": "authentication#2" },
+  { "id": "q06", "tag": "entity",    "q": "What does E_DOC_NOT_FOUND indicate?",              "hint": "errors#2" },
+  { "id": "q07", "tag": "specific",  "q": "Is E_INTERNAL safe to retry?",                     "hint": "errors#2" },
+  { "id": "q08", "tag": "negation",  "q": "Which 4xx errors should be retried?",              "hint": "errors#0" },
+  { "id": "q09", "tag": "negation",  "q": "Can a viewer delete a document?",                  "hint": "errors#3" },
+  { "id": "q10", "tag": "numeric",   "q": "What is the default expiration for a document?",   "hint": "signing#4" },
+  { "id": "q11", "tag": "numeric",   "q": "What is the maximum document expiration?",         "hint": "signing#4" },
+  { "id": "q12", "tag": "specific",  "q": "What HTTP status is returned when creating a document?", "hint": "signing#0" },
+  { "id": "q13", "tag": "negation",  "q": "Can an expired document be re-sent?",              "hint": "signing#4" },
+  { "id": "q14", "tag": "numeric",   "q": "How many times are failed webhooks retried?",      "hint": "webhooks#3" },
+  { "id": "q15", "tag": "numeric",   "q": "What is the total webhook retry window?",          "hint": "webhooks#3" },
+  { "id": "q16", "tag": "negation",  "q": "Are webhook events guaranteed to arrive in order?", "hint": "webhooks#4" },
+  { "id": "q17", "tag": "entity",    "q": "What HMAC algorithm verifies webhook signatures?", "hint": "webhooks#2 or webhooks#5" },
+  { "id": "q18", "tag": "paraphrase","q": "How do I prove who I am to the API?",              "hint": "authentication#0" },
+  { "id": "q19", "tag": "sequential","q": "What state comes after sent?",                     "hint": "signing#1" },
+  { "id": "q20", "tag": "negation",  "q": "Can a signer change recipient roles?",             "hint": "errors#3" }
+]

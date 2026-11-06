@@ -38,3 +38,4 @@ data/docs.db-*
 data/lumen.db
 data/lumen.db-shm
 data/lumen.db-wal
+data/corpus
