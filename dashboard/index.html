@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lumen Docs Q&A</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 780px; margin: 2.5rem auto; padding: 0 1.25rem; color: #222; line-height: 1.6;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+  .sub { color: #666; font-size: 0.9rem; margin-bottom: 1.5rem; }
+  form { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+  input[type=text] {
+    flex: 1; padding: 0.65rem 0.85rem; font-size: 1rem;
+    border: 1px solid #ccc; border-radius: 6px; outline: none;
+  }
+  input[type=text]:focus { border-color: #0066cc; }
+  button {
+    padding: 0.65rem 1.2rem; font-size: 1rem; font-weight: 500;
+    background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  button:disabled { background: #888; cursor: wait; }
+  .samples { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+  .sample {
+    font-size: 0.8rem; padding: 0.25rem 0.65rem; border: 1px solid #d0d0d0;
+    border-radius: 14px; background: white; cursor: pointer; color: #444;
+  }
+  .sample:hover { border-color: #0066cc; color: #0066cc; }
+  .sample.off { background: #fff8e7; border-color: #e8c98f; }
+  .sample.off:hover { border-color: #b8860b; color: #b8860b; }
+  .answer {
+    padding: 1rem 1.25rem; background: #f7f7f8; border-radius: 8px;
+    margin-top: 0.5rem; white-space: pre-wrap; word-wrap: break-word;
+  }
+  .answer.abstain { background: #fff8e7; color: #885500; font-style: italic; }
+  .citation-ref {
+    display: inline-block; font-size: 0.75rem; padding: 0 0.35em;
+    background: #0066cc; color: white; border-radius: 3px;
+    cursor: pointer; margin: 0 0.1em; vertical-align: super;
+    font-weight: 600; text-decoration: none; line-height: 1.2;
+  }
+  .citation-ref:hover { background: #0050a0; }
+  .citations { margin-top: 1.25rem; }
+  .citation {
+    border: 1px solid #e0e0e0; border-radius: 6px; margin-bottom: 0.5rem;
+    overflow: hidden; transition: border-color 0.15s;
+  }
+  .citation.highlight {
+    border-color: #0066cc;
+    box-shadow: 0 0 0 2px rgba(0,102,204,0.15);
+  }
+  .citation-header {
+    padding: 0.65rem 0.85rem; background: #fafafa; cursor: pointer;
+    display: flex; align-items: center; gap: 0.6rem; user-select: none;
+  }
+  .citation-header:hover { background: #f0f0f0; }
+  .citation-header .n {
+    background: #0066cc; color: white; padding: 0 0.4em; border-radius: 3px;
+    font-size: 0.75rem; font-weight: 700; line-height: 1.6; min-width: 1.4em;
+    text-align: center;
+  }
+  .citation-header .heading { color: #333; font-size: 0.9rem; flex: 1; }
+  .citation-header .score { color: #888; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+  .citation-body {
+    display: none; padding: 0.85rem; white-space: pre-wrap;
+    font-size: 0.85rem; background: white; border-top: 1px solid #eee;
+    line-height: 1.55; color: #333;
+  }
+  .citation.open .citation-body { display: block; }
+  .meta {
+    margin-top: 1.25rem; color: #999; font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error {
+    padding: 1rem; background: #ffe7e7; color: #a00;
+    border-radius: 8px; margin-top: 0.5rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Lumen Docs Q&A</h1>
+<div class="sub">
+  Ask a question. Every claim in the answer cites the source chunk it came from — click a <code>[n]</code> to expand it below.
+</div>
+
+<form id="form">
+  <input id="q" type="text" placeholder="Ask about the Lumen API…" autofocus autocomplete="off">
+  <button type="submit" id="btn">Ask</button>
+</form>
+
+<div class="samples" id="samples">
+  <button class="sample" data-q="Is E_INTERNAL safe to retry?">Is E_INTERNAL safe to retry?</button>
+  <button class="sample" data-q="How many times are failed webhooks retried?">webhook retry count</button>
+  <button class="sample" data-q="Can a viewer delete a document?">can a viewer delete?</button>
+  <button class="sample" data-q="How do I prove who I am to the API?">how do I authenticate?</button>
+  <button class="sample off" data-q="Does Lumen support SAML SSO?">(off-scope) SAML SSO</button>
+  <button class="sample off" data-q="Who is the CEO of Lumen?">(off-scope) CEO</button>
+</div>
+
+<div id="output"></div>
+
+<script>
+const form = document.getElementById("form");
+const q = document.getElementById("q");
+const btn = document.getElementById("btn");
+const output = document.getElementById("output");
+
+// Sample buttons: fill + submit
+document.querySelectorAll(".sample").forEach((el) => {
+  el.addEventListener("click", () => {
+    q.value = el.dataset.q;
+    form.requestSubmit();
+  });
+});
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const query = q.value.trim();
+  if (!query) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Thinking';
+  output.innerHTML = "";
+
+  try {
+    const res = await fetch("/query", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    render(data);
+  } catch (err) {
+    output.innerHTML = `<div class="error">Error: ${escapeHtml(String(err.message || err))}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Ask";
+  }
+});
+
+function render(data) {
+  const answerClass = data.abstained ? "answer abstain" : "answer";
+  const answerHtml = escapeHtml(data.answer).replace(
+    /\[(\d+)\]/g,
+    '<span class="citation-ref" data-n="$1" title="Click to see source">$1</span>',
+  );
+
+  let html = `<div class="${answerClass}">${answerHtml}</div>`;
+
+  if (data.citations && data.citations.length > 0) {
+    html += '<div class="citations">';
+    for (const c of data.citations) {
+      const heading = escapeHtml(c.headingPath.join(" › "));
+      const cand = data.candidates.find((x) => x.id === c.chunkId);
+      const score = cand ? `${cand.score}/10` : "";
+      html += `
+        <div class="citation" data-n="${c.n}">
+          <div class="citation-header">
+            <span class="n">${c.n}</span>
+            <span class="heading">${heading}</span>
+            <span class="score">${score}</span>
+          </div>
+          <div class="citation-body">${escapeHtml(c.text)}</div>
+        </div>
+      `;
+    }
+    html += "</div>";
+  }
+
+  const t = data.timings;
+  const totalSec = (t.total / 1000).toFixed(2);
+  html += `<div class="meta">
+    ${data.abstained ? "abstained (" + data.abstainReason + ")" : "answered"} ·
+    top score ${data.topScore}/10 ·
+    retrieve ${t.retrieve.toFixed(0)}ms ·
+    rerank ${t.rerank.toFixed(0)}ms ·
+    generate ${t.generate.toFixed(0)}ms ·
+    total ${totalSec}s
+  </div>`;
+
+  output.innerHTML = html;
+
+  document.querySelectorAll(".citation-ref").forEach((el) => {
+    el.addEventListener("click", () => highlightCitation(Number(el.dataset.n)));
+  });
+  document.querySelectorAll(".citation-header").forEach((el) => {
+    el.addEventListener("click", () => el.parentElement.classList.toggle("open"));
+  });
+}
+
+function highlightCitation(n) {
+  document.querySelectorAll(".citation").forEach((c) => c.classList.remove("highlight"));
+  const target = document.querySelector(`.citation[data-n="${n}"]`);
+  if (target) {
+    target.classList.add("highlight", "open");
+    target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
+function escapeHtml(s) {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+</script>
+</body>
+</html>
