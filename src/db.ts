@@ -37,6 +37,12 @@ export function openDb(path = "data/lumen.db"): Database {
       score         INTEGER NOT NULL,
       created_at    INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS generation_cache (
+      key       TEXT PRIMARY KEY,
+      answer    TEXT NOT NULL,
+      created_at INTEGER NOT NULL
+    );
   `);
   return db;
 }
