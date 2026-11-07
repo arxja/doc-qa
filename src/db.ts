@@ -43,6 +43,13 @@ export function openDb(path = "data/lumen.db"): Database {
       answer    TEXT NOT NULL,
       created_at INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS faithfulness_cache (
+      key        TEXT PRIMARY KEY,
+      verdict    TEXT NOT NULL,       -- 'supported' | 'partial' | 'unsupported'
+      reasoning  TEXT,                -- short justification, useful for debugging
+      created_at INTEGER NOT NULL
+    );
   `);
   return db;
 }
