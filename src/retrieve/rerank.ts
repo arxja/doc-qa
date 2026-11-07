@@ -135,22 +135,24 @@ export class Reranker {
     }
 
     await bucket.take();
-    const res = await withRetry(() =>
-      this.ai.models.generateContent({
-        model: MODEL,
-        contents: PROMPT(query, chunk.text),
-        config: {
-          temperature: 0,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              score: { type: Type.INTEGER, minimum: 0, maximum: 10 },
+    const res = await withRetry(
+      () =>
+        this.ai.models.generateContent({
+          model: MODEL,
+          contents: PROMPT(query, chunk.text),
+          config: {
+            temperature: 0,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.OBJECT,
+              properties: {
+                score: { type: Type.INTEGER, minimum: 0, maximum: 10 },
+              },
+              required: ["score"],
             },
-            required: ["score"],
           },
-        },
-      }), "score"
+        }),
+      "score",
     );
     this.callsMade++;
     const parsed = JSON.parse(res.text ?? "{}") as { score?: number };
