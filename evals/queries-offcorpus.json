@@ -1,0 +1,12 @@
+[
+  { "id": "o01", "q": "Who is the CEO of Lumen?", "reason": "no executive names in docs" },
+  { "id": "o02", "q": "What programming language is Lumen's backend built with?", "reason": "tech stack not documented" },
+  { "id": "o03", "q": "Is Lumen a publicly traded company?", "reason": "no corporate/financial structure info" },
+  { "id": "o04", "q": "Where is Lumen's headquarters located?", "reason": "no office location info; 'US data storage' is a security concern, not a company address" },
+  { "id": "o05", "q": "How many employees work at Lumen?", "reason": "no headcount info" },
+  { "id": "o06", "q": "Can I contribute to Lumen's source code?", "reason": "no open-source info; SDKs use npm/pip but that's distribution, not source" },
+  { "id": "o07", "q": "Where can I buy Lumen merchandise?", "reason": "no merch/store page" },
+  { "id": "o08", "q": "What was Lumen's revenue last year?", "reason": "no financials; billing.md describes pricing, not revenue" },
+  { "id": "o09", "q": "Does Lumen have an affiliate or reseller program?", "reason": "integrations.md lists 5 technical integrations, not commercial partner programs" },
+  { "id": "o10", "q": "What is Lumen's hiring process for engineers?", "reason": "no HR/hiring info" }
+]
